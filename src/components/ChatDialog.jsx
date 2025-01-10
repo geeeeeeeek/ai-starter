@@ -5,11 +5,14 @@ import {materialDark} from "react-syntax-highlighter/src/styles/prism";
 import {throttle} from "lodash/function";
 import {Button} from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import {useSelector} from "react-redux";
 
 
 const ChatDialog = () => {
     const [messages, setMessages] = useState([{role: 'assistant', content: '很高兴认识你，需要帮助吗？'}]);
     const [input, setInput] = useState('');
+
+    
 
     // 创建消息容器的引用
     const messagesEndRef = useRef(null);
