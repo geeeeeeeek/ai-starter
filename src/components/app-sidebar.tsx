@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/sidebar"
 import { useState } from "react"
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from "@/redix/store";
+import { setmyApp } from "@/redux/myAppSlice";
 
 // Menu items.
 const items = [
@@ -35,21 +35,28 @@ const items = [
 ]
 
 export function AppSidebar() {
-  const value = useSelector((state: RootState) => state.example.value);
+  const myApp = useSelector((state) => state.myApp);
+
   const dispatch = useDispatch();
 
   const [currentModel, setCurrentModel] = useState('DeepSeek');
 
-  const handleModelChange = (model: string) => {
-    setCurrentModel(model);
-    dispatch({ type: 'INCREMENT', payload: 22 })
+  const handleModelChange = (str: string) => {
+    setCurrentModel(str);
+    dispatch(
+      setmyApp({
+        uri: 'hello',
+        isPlaying: true,
+        model: str
+      })
+    )
   };
 
   return (
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>模型选择{value}</SidebarGroupLabel>
+          <SidebarGroupLabel>模型选择 ({myApp.model})</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (

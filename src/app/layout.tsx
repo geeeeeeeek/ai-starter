@@ -4,8 +4,7 @@ import "./globals.css";
 
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
-import { Provider } from "react-redux";
-import store from "@/redix/store";
+import ReduxProvider from "@/redux/redux-provider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -25,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <Provider store={store}>
+    <ReduxProvider>
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
@@ -38,7 +37,7 @@ export default function RootLayout({
         </SidebarProvider>
       </body>
     </html>
-    </Provider>
+    </ReduxProvider>
 
   );
 }
