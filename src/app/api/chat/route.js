@@ -1,17 +1,31 @@
 // app/api/chat/route.js
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-  baseURL: 'https://api.deepseek.com',
-  apiKey: process.env.OPENAI_API_KEY, // 从环境变量中获取 API Key
-});
+
 
 export async function POST(request) {
-  const { messages } = await request.json();
+  const { messages, model } = await request.json();
+  console.log("model===>" + model);
+
+  let baseURL = 'https://api.deepseek.com';
+  let apiKey = process.env.OPENAI_API_KEY;
+
+  if (model === 'gpt-4o-mini' || model === 'gpt-4o') {
+    baseURL = 'https://models.inference.ai.azure.com';
+    apiKey = process.env.OPENAI_API_KEY_GPT;
+  } else {
+    baseURL = 'https://api.deepseek.com';
+    apiKey = process.env.OPENAI_API_KEY;
+  }
+
+  const openai = new OpenAI({
+    baseURL: baseURL,
+    apiKey: apiKey, // 从环境变量中获取 API Key
+  });
 
   try {
     const response = await openai.chat.completions.create({
-      model: 'deepseek-chat',
+      model: model,
       messages,
       stream: true, // 启用流式响应
     });

@@ -27,7 +27,7 @@ export default function RootLayout({
     <ReduxProvider>
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-blue-100 `}
       >
         <SidebarProvider>
           <AppSidebar />

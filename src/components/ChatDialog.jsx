@@ -1,18 +1,23 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
-import {materialDark} from "react-syntax-highlighter/src/styles/prism";
-import {throttle} from "lodash/function";
-import {Button} from "@/components/ui/button";
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { materialDark } from "react-syntax-highlighter/src/styles/prism";
+import { throttle } from "lodash/function";
+import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import {useSelector} from "react-redux";
+import { useSelector } from "react-redux";
 
 
 const ChatDialog = () => {
-    const [messages, setMessages] = useState([{role: 'assistant', content: '很高兴认识你，需要帮助吗？'}]);
+    const [messages, setMessages] = useState([{ role: 'assistant', content: '很高兴认识你，需要帮助吗？' }]);
     const [input, setInput] = useState('');
 
-    
+
+    const myApp = useSelector((state) => state.myApp);
+
+    useEffect (() => {
+        setMessages([{ role: 'assistant', content: '很高兴认识你，需要帮助吗？' }]);
+    }, [myApp.model]);
 
     // 创建消息容器的引用
     const messagesEndRef = useRef(null);
@@ -31,7 +36,7 @@ const ChatDialog = () => {
     const handleSend = async () => {
         if (!input.trim()) return;
 
-        const userMessage = {role: 'user', content: input};
+        const userMessage = { role: 'user', content: input };
 
         // 添加用户消息
         setMessages((prev) => [...prev, userMessage]);
@@ -43,7 +48,7 @@ const ChatDialog = () => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({messages: [...messages.slice(-4), userMessage]}),
+            body: JSON.stringify({ model: myApp.model, messages: [...messages.slice(-4), userMessage] }),
         });
 
         // 处理流式响应
@@ -52,7 +57,7 @@ const ChatDialog = () => {
         let assistantMessage = '';
 
         while (true) {
-            const {done, value} = await reader.read();
+            const { done, value } = await reader.read();
             if (done) break;
 
             // 解析流式数据
@@ -65,9 +70,9 @@ const ChatDialog = () => {
                     setMessages((prev) => {
                         const lastMessage = prev[prev.length - 1];
                         if (lastMessage?.role === 'assistant') {
-                            return [...prev.slice(0, -1), {role: 'assistant', content: assistantMessage}];
+                            return [...prev.slice(0, -1), { role: 'assistant', content: assistantMessage }];
                         } else {
-                            return [...prev, {role: 'assistant', content: assistantMessage}];
+                            return [...prev, { role: 'assistant', content: assistantMessage }];
                         }
                     });
                 }
@@ -78,10 +83,10 @@ const ChatDialog = () => {
 
     return (
         <div className="flex-1 flex flex-col h-full bg-white p-0">
-            <div className="flex flex-row justify-center bg-white p-4 shadow text-center ">
-                
-                <SidebarTrigger />
-                <div className="flex-1 h-8 leading-8 ">AI 聊天窗口</div>
+            <div className="relative bg-white h-12 shadow">
+
+                <SidebarTrigger className="absolute h-12 w-12"/>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ">AI 聊天窗口</div>
             </div>
             <div className="flex-1 overflow-y-auto mt-4 mb-4 space-y-4 ">
                 {messages.map((msg, index) => (
@@ -97,7 +102,7 @@ const ChatDialog = () => {
                                 <div className="flex gap-4">
                                     <div>
                                         <svg t="1735719680744" className="icon" viewBox="0 0 1024 1024" version="1.1"
-                                             xmlns="http://www.w3.org/2000/svg" p-id="20857" width="32" height="32">
+                                            xmlns="http://www.w3.org/2000/svg" p-id="20857" width="32" height="32">
                                             <path
                                                 d="M509.44 403.2c-26.88 0-48.64 21.76-48.64 48.64s21.76 48.64 48.64 48.64 48.64-21.76 48.64-48.64c1.28-26.88-20.48-48.64-48.64-48.64z m104.96 53.76c0 26.88 21.76 48.64 48.64 48.64s48.64-21.76 48.64-48.64-21.76-48.64-48.64-48.64c-26.88-1.28-48.64 20.48-48.64 48.64zM512 0C229.12 0 0 229.12 0 512s229.12 512 512 512 512-229.12 512-512S794.88 0 512 0z m243.2 509.44c-14.08 117.76-138.24 200.96-267.52 192-14.08-1.28-29.44 1.28-42.24 7.68l-87.04 47.36c-12.8 6.4-23.04 1.28-26.88-1.28s-12.8-10.24-12.8-24.32l2.56-70.4c1.28-19.2 3.84-46.08-12.8-58.88-56.32-44.8-57.6-97.28-51.2-152.32 12.8-111.36 115.2-195.84 234.24-195.84 10.24 0 21.76 1.28 32 2.56 65.28 7.68 128 34.56 167.68 83.2 44.8 46.08 70.4 111.36 64 170.24zM353.28 403.2c-26.88 0-48.64 21.76-48.64 48.64s21.76 48.64 48.64 48.64 48.64-21.76 48.64-48.64-21.76-48.64-48.64-48.64z"
                                                 p-id="20858" fill="#1296db"></path>
@@ -105,7 +110,7 @@ const ChatDialog = () => {
                                     </div>
                                     <div className="pt-1">
                                         <ReactMarkdown components={{
-                                            code({node, inline, className, children, ...props}) {
+                                            code({ node, inline, className, children, ...props }) {
                                                 const match = /language-(\w+)/.exec(className || '');
                                                 return !inline && match ? (
                                                     <SyntaxHighlighter
@@ -130,7 +135,7 @@ const ChatDialog = () => {
                     </div>
                 ))}
                 {/* 用于自动滚动的空 div */}
-                <div ref={messagesEndRef}/>
+                <div ref={messagesEndRef} />
             </div>
             <div className="flex w-full max-w-4xl mb-4 m-auto " >
                 <input

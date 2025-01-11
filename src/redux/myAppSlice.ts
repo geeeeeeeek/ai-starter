@@ -19,7 +19,7 @@ const initialState: myAppState = {
   coverImage: "",
   title: "",
   artist: "",
-  model: "DeepSeek",
+  model: "deepseek-chat",
 };
 
 // 创建 Slice
