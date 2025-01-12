@@ -52,7 +52,7 @@ const notify = () => toast.success('模型已切换!', {
 
 export function AppSidebar() {
 
-    const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
+  const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
 
   const myApp = useSelector((state: RootState) => state.myApp);
 
@@ -64,7 +64,10 @@ export function AppSidebar() {
     setCurrentModel(str);
     dispatch(setModel(str))
     notify();
-    state === "expanded" && isMobile && setOpenMobile(false);
+    // state === "expanded" && isMobile && setOpenMobile(false);
+    if (state === "expanded" && isMobile) {
+      setOpenMobile(false);
+    }
   };
 
   return (

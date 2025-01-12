@@ -29,11 +29,16 @@ const ChatDialog = () => {
         if (canScroll) {
             messagesEndRef.current?.scrollIntoView();
         }
-    }, 300); //
+    }, 300);
 
     // 每次 messages 更新时，自动滚动
     useEffect(() => {
+
         scrollToBottom();
+
+        return ()=>{
+            scrollToBottom.cancel();
+        }
     }, [messages]);
 
     // 监听鼠标滚轮
@@ -110,7 +115,7 @@ const ChatDialog = () => {
                     }
                 }
             }
-            
+
         } catch (err) {
             console.log(err);
         } finally {
