@@ -13,6 +13,7 @@ const ChatDialog = () => {
     const [input, setInput] = useState('');
 
     const [canScroll, setCanScroll] = useState(true);
+    const [isFetching, setIsFetching] = useState(false);
 
     const currentModel = useSelector((state) => state.myApp.model);
 
@@ -54,7 +55,15 @@ const ChatDialog = () => {
     const handleSend = async () => {
         if (!input.trim()) return;
 
+        // 含义: fetching的时候点击send按钮无效
+        if (isFetching) {
+            return;
+        } else {
+            setIsFetching(true);
+        }
+
         setCanScroll(true);
+
 
         const userMessage = { role: 'user', content: input };
 
@@ -62,42 +71,53 @@ const ChatDialog = () => {
         setMessages((prev) => [...prev, userMessage]);
         setInput('');
 
-        // 调用流式 API
-        const response = await fetch('/api/chat', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ model: currentModel, messages: [...messages.slice(-4), userMessage] }),
-        });
 
-        // 处理流式响应
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let assistantMessage = '';
 
-        while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
+        try {
+            // 调用流式 API
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ model: currentModel, messages: [...messages.slice(-4), userMessage] }),
+            });
 
-            // 解析流式数据
-            const chunk = decoder.decode(value);
-            const lines = chunk.split('\n\n').filter((line) => line.trim());
-            for (const line of lines) {
-                if (line.startsWith('data:')) {
-                    const data = JSON.parse(line.slice(5).trim());
-                    assistantMessage += data.content;
-                    setMessages((prev) => {
-                        const lastMessage = prev[prev.length - 1];
-                        if (lastMessage?.role === 'assistant') {
-                            return [...prev.slice(0, -1), { role: 'assistant', content: assistantMessage }];
-                        } else {
-                            return [...prev, { role: 'assistant', content: assistantMessage }];
-                        }
-                    });
+            // 处理流式响应
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let assistantMessage = '';
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                // 解析流式数据
+                const chunk = decoder.decode(value);
+                const lines = chunk.split('\n\n').filter((line) => line.trim());
+                for (const line of lines) {
+                    if (line.startsWith('data:')) {
+                        const data = JSON.parse(line.slice(5).trim());
+                        assistantMessage += data.content;
+                        setMessages((prev) => {
+                            const lastMessage = prev[prev.length - 1];
+                            if (lastMessage?.role === 'assistant') {
+                                return [...prev.slice(0, -1), { role: 'assistant', content: assistantMessage }];
+                            } else {
+                                return [...prev, { role: 'assistant', content: assistantMessage }];
+                            }
+                        });
+                    }
                 }
             }
+            
+        } catch (err) {
+            console.log(err);
+        } finally {
+            setIsFetching(false);
         }
+
+
 
     };
 
@@ -167,7 +187,7 @@ const ChatDialog = () => {
                     placeholder="给AI发送消息..."
                 />
 
-                <Button onClick={handleSend} className="bg-blue-500 text-white h-12 py-4 px-4 rounded-l-none rounded-r-lg hover:bg-blue-600">
+                <Button onClick={handleSend} disabled={isFetching} className="bg-blue-500 text-white h-12 py-4 px-4 rounded-l-none rounded-r-lg hover:bg-blue-600">
                     发送
                 </Button>
             </div>
