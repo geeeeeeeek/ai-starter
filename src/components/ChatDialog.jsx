@@ -12,19 +12,22 @@ const ChatDialog = () => {
     const [messages, setMessages] = useState([{ role: 'assistant', content: '很高兴认识你，需要帮助吗？' }]);
     const [input, setInput] = useState('');
 
+    const [canScroll, setCanScroll] = useState(true);
 
-    const myApp = useSelector((state) => state.myApp);
+    const currentModel = useSelector((state) => state.myApp.model);
 
-    useEffect (() => {
+    useEffect(() => {
         setMessages([{ role: 'assistant', content: '很高兴认识你，需要帮助吗？' }]);
-    }, [myApp.model]);
+    }, [currentModel]);
 
     // 创建消息容器的引用
     const messagesEndRef = useRef(null);
 
     // 自动滚动到底部(节流)
     const scrollToBottom = throttle(() => {
-        messagesEndRef.current?.scrollIntoView();
+        if (canScroll) {
+            messagesEndRef.current?.scrollIntoView();
+        }
     }, 300); //
 
     // 每次 messages 更新时，自动滚动
@@ -32,9 +35,26 @@ const ChatDialog = () => {
         scrollToBottom();
     }, [messages]);
 
+    // 监听鼠标滚轮
+    useEffect(() => {
+        const handleWheel = (event) => {
+            if (event.deltaY < 0) {
+                setCanScroll(false);
+            }
+        };
+
+        window.addEventListener('wheel', handleWheel);
+
+        return () => {
+            window.removeEventListener('wheel', handleWheel);
+        };
+    }, []);
+
 
     const handleSend = async () => {
         if (!input.trim()) return;
+
+        setCanScroll(true);
 
         const userMessage = { role: 'user', content: input };
 
@@ -48,7 +68,7 @@ const ChatDialog = () => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ model: myApp.model, messages: [...messages.slice(-4), userMessage] }),
+            body: JSON.stringify({ model: currentModel, messages: [...messages.slice(-4), userMessage] }),
         });
 
         // 处理流式响应
@@ -82,10 +102,10 @@ const ChatDialog = () => {
     };
 
     return (
-        <div className="flex-1 flex flex-col h-full bg-white p-0">
+        <div className="flex-1 flex flex-col h-screen bg-white p-0">
             <div className="relative bg-white h-12 shadow">
 
-                <SidebarTrigger className="absolute h-12 w-12"/>
+                <SidebarTrigger className="absolute h-12 w-12" />
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ">AI 聊天窗口</div>
             </div>
             <div className="flex-1 overflow-y-auto mt-4 mb-4 space-y-4 ">

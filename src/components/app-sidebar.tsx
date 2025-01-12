@@ -14,8 +14,9 @@ import {
 } from "@/components/ui/sidebar"
 import { useState } from "react"
 import { useSelector, useDispatch } from 'react-redux';
-import { setmyApp } from "@/redux/myAppSlice";
+import { setModel } from "@/redux/myAppSlice";
 import { Bounce, toast } from "react-toastify";
+import { RootState } from "@/redux/store";
 
 // Menu items.
 const items = [
@@ -53,7 +54,7 @@ export function AppSidebar() {
 
     const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
 
-  const myApp = useSelector((state) => state.myApp);
+  const myApp = useSelector((state: RootState) => state.myApp);
 
   const dispatch = useDispatch();
 
@@ -61,13 +62,7 @@ export function AppSidebar() {
 
   const handleModelChange = (str: string) => {
     setCurrentModel(str);
-    dispatch(
-      setmyApp({
-        uri: 'hello',
-        isPlaying: true,
-        model: str
-      })
-    );
+    dispatch(setModel(str))
     notify();
     state === "expanded" && isMobile && setOpenMobile(false);
   };

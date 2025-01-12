@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // 定义状态类型
-interface myAppState {
+interface MyAppState {
   uri: string;
   isPlaying: boolean;
   index: number;
@@ -12,7 +12,7 @@ interface myAppState {
 }
 
 // 初始状态
-const initialState: myAppState = {
+const initialState: MyAppState = {
   uri: "/audio/chin-tapak-dum-dum.mp3",
   isPlaying: true,
   index: 0,
@@ -43,14 +43,14 @@ const myAppSlice = createSlice({
       state.model = action.payload;
     },
     // 设置整个app状态
-    setmyApp: (state, action: PayloadAction<Partial<myAppState>>) => {
+    setMyApp: (state, action: PayloadAction<Partial<MyAppState>>) => {
       return { ...state, ...action.payload };
     },
   },
 });
 
 // 导出 actions
-export const { setUri, setIsPlaying, setIndex, setmyApp } =
+export const { setUri, setIsPlaying, setIndex, setModel, setMyApp } =
   myAppSlice.actions;
 
 // 导出 reducer
