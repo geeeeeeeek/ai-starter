@@ -2,8 +2,8 @@
 import OpenAI from 'openai';
 
 let requests = {};
-const RATE_LIMIT = 2; // 每分钟最多请求次数
-const TIME_FRAME = 60 * 1000; // 时间范围：1分钟
+const RATE_LIMIT = 100; // 最多请求次数
+const TIME_FRAME = 60 * 60 * 1000; // 时间范围：60分钟
 
 function checkRateLimit(req) {
   const ip = req.headers.get('x-forwarded-for') || req.ip;
