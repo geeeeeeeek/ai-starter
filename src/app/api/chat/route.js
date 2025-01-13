@@ -1,9 +1,57 @@
 // app/api/chat/route.js
 import OpenAI from 'openai';
 
+let requests = {};
+const RATE_LIMIT = 2; // 每分钟最多请求次数
+const TIME_FRAME = 60 * 1000; // 时间范围：1分钟
 
+function checkRateLimit(req) {
+  const ip = req.headers.get('x-forwarded-for') || req.ip;
+
+  const now = Date.now();
+
+  // 初始化请求计数
+  if (!requests[ip]) {
+    requests[ip] = {
+      count: 1,
+      startTime: now,
+    };
+  } else {
+    const { count, startTime } = requests[ip];
+
+    // 检查时间范围
+    if (now - startTime > TIME_FRAME) {
+      // 超出时间范围，重置计数
+      requests[ip] = {
+        count: 1,
+        startTime: now,
+      };
+    } else {
+      // 在时间范围内的请求计数
+      if (count < RATE_LIMIT) {
+        requests[ip].count += 1; // 增加计数
+      } else {
+        return true;
+      }
+    }
+  }
+  return false;
+}
 
 export async function POST(request) {
+
+
+  // 限流
+  let isRateLimited = checkRateLimit(request);
+  if (isRateLimited) {
+    return new Response(JSON.stringify({ message: 'Too Many Requests' }), {
+      status: 429,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+
+
   const { messages, model } = await request.json();
   console.log("model===>" + model);
 
