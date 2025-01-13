@@ -37,7 +37,7 @@ const items = [
   },
 ]
 
-const notify = () => toast.success('模型已切换!', {
+const notify = () => toast.success('The model has been switched.!', {
   position: "top-right",
   autoClose: 2000,
   hideProgressBar: true,
@@ -64,7 +64,6 @@ export function AppSidebar() {
     setCurrentModel(str);
     dispatch(setModel(str))
     notify();
-    // state === "expanded" && isMobile && setOpenMobile(false);
     if (state === "expanded" && isMobile) {
       setOpenMobile(false);
     }
@@ -74,7 +73,7 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>模型选择 ({myApp.model})</SidebarGroupLabel>
+          <SidebarGroupLabel>Model Selection ({myApp.model})</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (

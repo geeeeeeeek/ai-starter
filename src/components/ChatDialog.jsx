@@ -9,7 +9,7 @@ import { useSelector } from "react-redux";
 
 
 const ChatDialog = () => {
-    const [messages, setMessages] = useState([{ role: 'assistant', content: '很高兴认识你，需要帮助吗？' }]);
+    const [messages, setMessages] = useState([{ role: 'assistant', content: 'Hi, nice to meet you.' }]);
     const [input, setInput] = useState('');
 
     const [canScroll, setCanScroll] = useState(true);
@@ -18,7 +18,7 @@ const ChatDialog = () => {
     const currentModel = useSelector((state) => state.myApp.model);
 
     useEffect(() => {
-        setMessages([{ role: 'assistant', content: '很高兴认识你，需要帮助吗？' }]);
+        setMessages([{ role: 'assistant', content: 'Hi, nice to meet you.' }]);
     }, [currentModel]);
 
     // 创建消息容器的引用
@@ -131,7 +131,7 @@ const ChatDialog = () => {
             <div className="relative bg-white h-12 shadow">
 
                 <SidebarTrigger className="absolute h-12 w-12" />
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ">AI 聊天窗口</div>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ">AI Chat</div>
             </div>
             <div className="flex-1 overflow-y-auto mt-4 mb-4 space-y-4 ">
                 {messages.map((msg, index) => (
@@ -189,11 +189,11 @@ const ChatDialog = () => {
                     onChange={(e) => setInput(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                     className="flex-1 h-12 p-4 border border-gray-300 rounded-l-lg focus:outline-none"
-                    placeholder="给AI发送消息..."
+                    placeholder="Send a message to AI...."
                 />
 
                 <Button onClick={handleSend} disabled={isFetching} className="bg-blue-500 text-white h-12 py-4 px-4 rounded-l-none rounded-r-lg hover:bg-blue-600">
-                    发送
+                    Send
                 </Button>
             </div>
         </div>
