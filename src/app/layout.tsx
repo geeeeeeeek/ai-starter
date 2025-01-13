@@ -1,4 +1,4 @@
-'use client';
+// 'use client';
 import localFont from "next/font/local";
 import "./globals.css";
 
@@ -16,6 +16,12 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
   weight: "100 900",
 });
+
+
+export const metadata = {
+  title: 'Chat with AI',
+  description: 'online chat window Integrated with models like deepseek and gpt-4o, no Login',
+};
 
 
 export default function RootLayout({
