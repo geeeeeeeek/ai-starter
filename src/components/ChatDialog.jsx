@@ -26,8 +26,8 @@ const ChatDialog = () => {
 
     // 自动滚动到底部(节流)
     const scrollToBottom = throttle(() => {
-        if (canScroll) {
-            messagesEndRef.current?.scrollIntoView();
+        if (canScroll && messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView();
         }
     }, 300);
 
