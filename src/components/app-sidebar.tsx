@@ -37,7 +37,7 @@ const items = [
   },
 ]
 
-const notify = () => toast.success('The model has been switched.!', {
+const notify = () => toast.success('模型已切换', {
   position: "top-right",
   autoClose: 2000,
   hideProgressBar: true,
@@ -73,7 +73,7 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Model Selection ({myApp.model})</SidebarGroupLabel>
+          <SidebarGroupLabel>模型选择 ({myApp.model})</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
