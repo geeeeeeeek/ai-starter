@@ -35,6 +35,11 @@ const items = [
     url: "#",
     icon: Calendar,
   },
+  {
+    title: "openai/gpt-4.1",
+    url: "#",
+    icon: Calendar,
+  },
 ]
 
 const notify = () => toast.success('模型已切换', {

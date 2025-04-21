@@ -61,6 +61,9 @@ export async function POST(request) {
   if (model === 'gpt-4o-mini' || model === 'gpt-4o') {
     baseURL = 'https://models.inference.ai.azure.com';
     apiKey = process.env.OPENAI_API_KEY_GPT;
+  } else if (model === 'openai/gpt-4.1') {
+    baseURL = 'https://models.github.ai/inference';
+    apiKey = process.env.OPENAI_API_KEY_GPT;
   } else {
     baseURL = 'https://api.deepseek.com';
     apiKey = process.env.OPENAI_API_KEY;
